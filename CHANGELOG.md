@@ -4,6 +4,11 @@ All notable changes to this repository are documented here.
 
 This project follows [Semantic Versioning](https://semver.org/). For this static website, a release version represents the published site snapshot rather than an installed application.
 
+## [Unreleased]
+
+### Fixed
+- Corrected the 404 page's return link so it remains portable when the site is served from a project or preview path instead of the domain root.
+
 ## [0.1.2] - 2026-08-22
 
 ### Added
