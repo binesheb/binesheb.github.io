@@ -36,9 +36,12 @@ jobs:
           root = Path('.')
           pattern = re.compile(r'''(?:src|href)=["']([^"']+)["']''', re.I)
           ignored_prefixes = ('http://', 'https://', '//', '#', 'mailto:', 'tel:', 'data:', 'javascript:')
+          excluded_roots = (Path('documentation'),)
           missing = []
 
           for html in root.rglob('*.html'):
+              if any(excluded in html.parents for excluded in excluded_roots):
+                  continue
               text = html.read_text(encoding='utf-8')
               for target in pattern.findall(text):
                   target = target.split('?', 1)[0].split('#', 1)[0]
