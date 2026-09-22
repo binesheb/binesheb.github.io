@@ -97,3 +97,34 @@ jobs:
               raise SystemExit(1)
           print('Internal HTML links look valid.')
           PY
+      - name: Check duplicate HTML IDs
+        run: |
+          python - <<'PY'
+          from collections import Counter
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          class IdCollector(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.ids = []
+
+              def handle_starttag(self, tag, attrs):
+                  for name, value in attrs:
+                      if name == 'id' and value:
+                          self.ids.append(value)
+
+          duplicates = []
+          for path in Path('.').rglob('*.html'):
+              collector = IdCollector()
+              collector.feed(path.read_text(encoding='utf-8'))
+              for identifier, count in Counter(collector.ids).items():
+                  if count > 1:
+                      duplicates.append(f'{path}: id="{identifier}" appears {count} times')
+
+          if duplicates:
+              print('Duplicate HTML IDs:')
+              print('\n'.join(duplicates))
+              raise SystemExit(1)
+          print('HTML IDs are unique.')
+          PY
